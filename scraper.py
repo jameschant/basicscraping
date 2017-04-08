@@ -1,11 +1,13 @@
 import bs4 as bs
 import urllib.request
+import re
 
 steam_indie_games = urllib.request.urlopen("http://store.steampowered.com/tag/en/Indie/").read()
 soup = bs.BeautifulSoup(steam_indie_games, 'lxml')
 
 # Defining the initial source page
 body = soup.body
+
 
 # Set up the function to de-dupe the list of links we receive
 def de_dupe(seq):
@@ -17,26 +19,16 @@ def de_dupe(seq):
 # Initialising a list we can use to store the game pages to visit
 indie_game_list = []
 
+
 # Retrieve the list of links, only for those that contain 'app'
-for links in body.find_all('a'):
-    try:
-        link = links.get('href')
-        if 'app' in link:
-            print(link)
-            indie_game_list.append(link)
-    except TypeError:
-        print('TypeError')
-    # You might have to add an else condition or do exception handling to get past this error
-
-
-# OLD:: For all the links we found on the page, visit them and add them to the list above
-# for links in body.find_all('a'):
-#     link = links.get('href')
-#     indie_game_list.append(link)
+for links in body.find_all('a', href=True):
+    link = links.get('href')
+    if 'app' in link:
+        print(link)
+        indie_game_list.append(link)
 
 
 # De-dupe the list and discard those that don't refer to game pages
-
 de_dupe(indie_game_list)
 print(indie_game_list)
 
