@@ -1,6 +1,5 @@
 import bs4 as bs
 import urllib.request
-import re
 
 steam_indie_games = urllib.request.urlopen("http://store.steampowered.com/tag/en/Indie/").read()
 soup = bs.BeautifulSoup(steam_indie_games, 'lxml')
@@ -21,34 +20,26 @@ indie_game_list = []
 
 
 # Retrieve the list of links, only for those that contain 'app'
+# In the future i could try and remove the params
 for links in body.find_all('a', href=True):
     link = links.get('href')
     if 'app' in link:
-        print(link)
         indie_game_list.append(link)
 
 
 # De-dupe the list and discard those that don't refer to game pages
 de_dupe(indie_game_list)
-print(indie_game_list)
+print(indie_game_list[3:])
 
 
-# To Do Follow those links and collect the data for them
+# Follow those links and collect the data for them
+for target in indie_game_list[3:]:
+    game_page = urllib.request.urlopen(str(target)).read()
+    soup = bs.BeautifulSoup(game_page, 'lxml')
+    body = soup.body
+    game_title = soup.find("div", {"class" : "apphub_AppName"})
+    game_desc = soup.find("div", {"class" : "game_description_snippet"})
+    print(game_title.string)
+    print(game_desc.string)
 
-
-# links = soup.select("PopularNewReleasesRows a href")
-
-
-# # for tabs in indie_page:
-#     soup.find_all("div", {"class": "tab_item"})
-
-
-# def game_details():
-#     for games in indie_game_list:
-#         follow_links = urllib.request.urlopen("http://store.steampowered.com/tag/en/Indie/").read()
-#         soup = bs.BeautifulSoup(follow_links, 'lxml')
-#         game_title = soup.find("div", {"class" : "apphub_AppName"})
-#         game_desc = soup.find("div", {"class" : "game_description_snippet"})
-#         print(game_title.string)
-#         print(game_desc.string)
-
+    # Create a list where each value is a dictionary of title and description values
