@@ -1,8 +1,12 @@
 import bs4 as bs
-import urllib.request
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.keys import Keys
 
-steam_indie_games = urllib.request.urlopen("http://store.steampowered.com/tag/en/Indie/").read()
-soup = bs.BeautifulSoup(steam_indie_games, 'lxml')
+browser = webdriver.Chrome(executable_path=r"/home/james/beautifulsoup/chromedriver")
+browser.get("http://store.steampowered.com/tag/en/Indie/")
+html_source = browser.page_source
+soup = bs.BeautifulSoup(html_source, 'lxml')
 
 # Defining the initial source page
 body = soup.body
@@ -34,12 +38,16 @@ print(indie_game_list[3:])
 
 # Follow those links and collect the data for them
 for target in indie_game_list[3:]:
-    game_page = urllib.request.urlopen(str(target)).read()
+    # browser = webdriver.Chrome(executable_path=r"/home/james/beautifulsoup/chromedriver")
+    browser.get(str(target))
+    game_page = browser.page_source
     soup = bs.BeautifulSoup(game_page, 'lxml')
     body = soup.body
     game_title = soup.find("div", {"class" : "apphub_AppName"})
     game_desc = soup.find("div", {"class" : "game_description_snippet"})
     print(game_title.string)
     print(game_desc.string)
+
+browser.quit()
 
     # Create a list where each value is a dictionary of title and description values
