@@ -15,15 +15,18 @@ def de_dupe(seq):
 
 
 # Initialising a list we can use to store the game pages to visit
-
 indie_game_list = []
 
 # Retrieve the list of links, only for those that contain 'app'
 for links in body.find_all('a'):
-    link = links.get('href')
-    if 'app' in link:
-        print(link)
-        indie_game_list.append(link)
+    try:
+        link = links.get('href')
+        if 'app' in link:
+            print(link)
+            indie_game_list.append(link)
+    except TypeError:
+        print('TypeError')
+    # You might have to add an else condition or do exception handling to get past this error
 
 
 # OLD:: For all the links we found on the page, visit them and add them to the list above
