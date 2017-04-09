@@ -1,5 +1,6 @@
 import bs4 as bs
 from selenium import webdriver
+from selenium.webdriver.support.ui import Select
 # from selenium.common.exceptions import NoSuchElementException
 # from selenium.webdriver.common.keys import Keys
 
@@ -60,8 +61,16 @@ for target in indie_game_list[3:]:
             game_page = browser.page_source
         elif len(form) > 0 and form[0].is_displayed():
             print("form")
-            # Do something with the form
+            select_day = Select(browser.find_element_by_name('ageDay'))
+            select_day.select_by_value('10')
+            select_month = Select(browser.find_element_by_name('ageMonth'))
+            select_month.select_by_value('May')
+            select_year = Select(browser.find_element_by_name('ageYear'))
+            select_year.select_by_value('1980')
             game_page = browser.page_source
+            enter = browser.find_element_by_link_text("Enter")
+            browser.implicitly_wait(5)
+            enter.click()
         else:
             print("Age Check barrier")
             continue
