@@ -35,6 +35,14 @@ for links in body.find_all('a', href=True):
 de_dupe(indie_game_list)
 print(indie_game_list[3:])
 
+# Delete after testing
+indie_game_list = ['http://store.steampowered.com/app/341110/?snr=1_237_237__103',
+                   'http://store.steampowered.com/app/611350/?snr=1_237_237__103',
+                   'http://store.steampowered.com/app/538510/?snr=1_237_237__103',
+                   'http://store.steampowered.com/app/621840/?snr=1_237_237__103',
+                   'http://store.steampowered.com/app/238320/?snr=1_237_237__104',
+                   'http://store.steampowered.com/app/588920/?snr=1_237_237__103',
+                   'http://store.steampowered.com/app/342180/?snr=1_237_237__106']
 
 # Follow those links, minus the first three to Steam hardware, and collect the data for them
 for target in indie_game_list[3:]:
@@ -43,10 +51,20 @@ for target in indie_game_list[3:]:
     # Using Selenium to click the Continue button on age check if triggered
     game_page = browser.page_source
     if 'agecheck' in browser.current_url:
-        btn = browser.find_element_by_link_text("Continue")
-        browser.implicitly_wait(5)
-        btn.click()
-        game_page = browser.page_source
+        btn = browser.find_elements_by_link_text("Continue")
+        form = browser.find_elements_by_id("agecheck_form")
+        if len(btn) > 0 and btn[0].is_displayed():
+            print("button")
+            browser.implicitly_wait(5)
+            btn[0].click()
+            game_page = browser.page_source
+        elif len(form) > 0 and form[0].is_displayed():
+            print("form")
+            # Do something with the form
+            game_page = browser.page_source
+        else:
+            print("Age Check barrier")
+            continue
     soup = bs.BeautifulSoup(game_page, 'lxml')
     body = soup.body
     game_title = soup.find("div", {"class" : "apphub_AppName"})
