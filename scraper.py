@@ -40,10 +40,9 @@ print(indie_game_list[3:])
 for target in indie_game_list[3:]:
     browser.get(str(target))
     print(str(target))
-    # I need to use Selenium to click that Continue button on age check if triggered
+    # Using Selenium to click the Continue button on age check if triggered
     game_page = browser.page_source
     if 'agecheck' in browser.current_url:
-        print('Continue')
         btn = browser.find_element_by_link_text("Continue")
         browser.implicitly_wait(5)
         btn.click()
@@ -52,8 +51,14 @@ for target in indie_game_list[3:]:
     body = soup.body
     game_title = soup.find("div", {"class" : "apphub_AppName"})
     game_desc = soup.find("div", {"class" : "game_description_snippet"})
-    print(game_title.string)
-    print(game_desc.string)
+    if game_title:
+        print(game_title.string)
+    else:
+        print("No Title")
+    if game_desc:
+        print(game_desc.string)
+    else:
+        print("No Description")
 
 browser.quit()
 
